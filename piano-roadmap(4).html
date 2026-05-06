@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Piano Roadmap — Zero to Play by Ear</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ivory:#F9F6F0; --cream:#EFE9DC; --ebony:#1A1612; --deep:#2C2519;
+    --warm:#8B6F47; --gold:#C4913A; --gold-light:#E8C47A; --muted:#7A6E60;
+    --s1:#6B5B95; --s2:#2E8B7A; --s3:#C17D2E; --s4:#B85450; --s5:#4A7FB5; --s6:#3D7A4A;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--ivory);color:var(--ebony);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.7;overflow-x:hidden}
+
+  /* HERO */
+  .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:6rem 2rem 4rem;position:relative;background:var(--ebony);overflow:hidden}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,#3a2e1e 0%,var(--ebony) 100%)}
+  .keys-bg{position:absolute;bottom:0;left:50%;transform:translateX(-50%);display:flex;opacity:.07;pointer-events:none}
+  .wk{width:52px;height:200px;background:var(--ivory);border:1px solid #444;border-top:none;position:relative}
+  .bk{position:absolute;width:32px;height:120px;background:var(--ebony);border:1px solid #333;top:0;z-index:1}
+  .hero-eyebrow{font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;position:relative;z-index:1;opacity:0;animation:fadeUp .8s .2s forwards}
+  .hero h1{font-family:'Playfair Display',serif;font-size:clamp(3rem,8vw,6.5rem);font-weight:400;line-height:1.05;color:var(--ivory);position:relative;z-index:1;opacity:0;animation:fadeUp .9s .4s forwards;max-width:900px}
+  .hero h1 em{font-style:italic;color:var(--gold-light)}
+  .hero-sub{font-size:1.05rem;color:#A89880;margin-top:1.5rem;max-width:480px;position:relative;z-index:1;opacity:0;animation:fadeUp .9s .6s forwards}
+  .hero-cta{margin-top:3rem;position:relative;z-index:1;opacity:0;animation:fadeUp .9s .8s forwards}
+  .btn-primary{display:inline-block;padding:.85rem 2.5rem;background:var(--gold);color:var(--ebony);font-family:'DM Sans',sans-serif;font-weight:500;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border:none;cursor:pointer;transition:background .2s,transform .15s}
+  .btn-primary:hover{background:var(--gold-light);transform:translateY(-1px)}
+  .scroll-hint{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);z-index:1;opacity:0;animation:fadeUp 1s 1.2s forwards;display:flex;flex-direction:column;align-items:center;gap:6px;color:#5A5040;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase}
+  .scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,#5A5040,transparent);animation:scrollPulse 2s ease-in-out infinite}
+  @keyframes scrollPulse{0%,100%{opacity:.3;transform:scaleY(.8)}50%{opacity:1;transform:scaleY(1)}}
+
+  /* INTRO */
+  .intro-strip{background:var(--cream);padding:5rem 2rem;text-align:center}
+  .intro-strip p{max-width:600px;margin:0 auto;font-size:1.15rem;color:var(--deep);line-height:1.8}
+  .intro-strip p span{font-family:'Playfair Display',serif;font-style:italic;color:var(--warm)}
+
+  /* PROGRESS */
+  .progress-section{background:var(--ebony);padding:1.2rem 2rem;display:flex;align-items:center;gap:1.5rem;position:sticky;top:0;z-index:100;border-bottom:1px solid #3A3020}
+  .prog-label{font-size:.72rem;color:#7A6A50;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+  .prog-bar{flex:1;height:2px;background:#3A3020}
+  .prog-fill{height:100%;background:var(--gold);transition:width .4s;width:0%}
+  .prog-count{font-size:.72rem;color:var(--gold);white-space:nowrap}
+
+  /* OVERVIEW */
+  .overview{padding:6rem 2rem;max-width:1100px;margin:0 auto}
+  .section-label{font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem}
+  .section-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);font-weight:400;color:var(--ebony);margin-bottom:3.5rem;max-width:500px;line-height:1.2}
+  .stages-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5px;background:var(--cream);border:1.5px solid var(--cream)}
+  .stage-card{background:var(--ivory);padding:2rem;cursor:pointer;transition:background .2s;position:relative;overflow:hidden}
+  .stage-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--stage-color);transform:scaleX(0);transform-origin:left;transition:transform .3s}
+  .stage-card:hover{background:#F4EFE7}
+  .stage-card:hover::after,.stage-card.active-card::after{transform:scaleX(1)}
+  .stage-card.active-card{background:#F4EFE7}
+  .stage-num{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--stage-color);margin-bottom:.5rem}
+  .stage-name{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:400;color:var(--ebony);margin-bottom:.4rem}
+  .stage-duration{font-size:.8rem;color:var(--muted);margin-bottom:1rem}
+  .stage-skills{list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+  .stage-skills li{font-size:.72rem;padding:3px 10px;background:var(--cream);color:var(--deep);border-radius:2px}
+  .click-hint{font-size:.7rem;color:var(--muted);margin-top:1rem;opacity:.7}
+
+  /* DETAIL PANEL */
+  .stage-detail{display:none;background:var(--deep);color:var(--ivory);overflow:hidden}
+  .stage-detail.open{display:block;animation:slideDown .35s ease forwards}
+  .stage-detail-inner{max-width:1100px;margin:0 auto;padding:4rem 2rem}
+  .stage-detail-header{display:flex;align-items:flex-start;justify-content:space-between;gap:2rem;margin-bottom:3rem;flex-wrap:wrap}
+  .stage-detail-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3vw,2.5rem);font-weight:400;color:var(--ivory)}
+  .stage-detail-meta{font-size:.8rem;color:#A89880;margin-top:.4rem}
+  .stage-detail-intro{font-size:.9rem;color:#BFB090;margin-top:.75rem;max-width:600px;line-height:1.8}
+  .close-btn{background:none;border:1px solid #4A3E28;color:#A89880;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;padding:.5rem 1.2rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:border-color .2s,color .2s;flex-shrink:0}
+  .close-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+  /* MONTHS NAV */
+  .months-nav{display:flex;gap:0;margin-bottom:3rem;border-bottom:1px solid #3A3020;overflow-x:auto}
+  .month-tab{padding:.7rem 1.5rem;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:#7A6A50;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s;font-family:'DM Sans',sans-serif;white-space:nowrap}
+  .month-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+  .month-tab:hover{color:var(--gold-light)}
+  .month-panel{display:none}
+  .month-panel.active{display:block}
+
+  /* WEEKS */
+  .weeks-list{display:flex;flex-direction:column;gap:1px;background:#3A3020}
+  .week-row{background:#241E14;padding:2rem;transition:background .2s}
+  .week-row:hover{background:#2E2719}
+  .week-top{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:.4rem;flex-wrap:wrap}
+  .week-label{font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);flex-shrink:0}
+  .week-time{font-size:.7rem;color:#5A5040}
+  .week-title-row{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:400;color:var(--ivory);margin-bottom:.5rem}
+  .week-desc{font-size:.82rem;color:#9A8A70;line-height:1.75;margin-bottom:1rem}
+  .week-tasks{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.5rem}
+  .task-chip{font-size:.72rem;padding:5px 11px;background:#3A3020;color:#BFB090;border-radius:2px;cursor:pointer;transition:background .15s,color .15s;user-select:none;display:flex;align-items:center;gap:6px}
+  .task-chip:hover{background:#4A3E28}
+  .task-chip.done{background:#1E3020;color:#5A8A60;text-decoration:line-through}
+  .task-chip .tc{width:8px;height:8px;border:1px solid #7A6A50;border-radius:50%;flex-shrink:0;transition:background .15s,border-color .15s}
+  .task-chip.done .tc{background:#4A8A55;border-color:#4A8A55}
+  .drills-label{font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:#5A5040;margin-top:.75rem;margin-bottom:.4rem}
+  .drill-list{list-style:none;display:flex;flex-direction:column;gap:4px}
+  .drill-list li{font-size:.78rem;color:#9A8A70;padding-left:1rem;position:relative;line-height:1.6}
+  .drill-list li::before{content:'—';position:absolute;left:0;color:#5A5040}
+  .milestone-row{background:#1E1A10;border-left:3px solid var(--gold);padding:1rem 2rem;display:flex;align-items:center;gap:1rem;font-size:.85rem;color:#C4913A}
+  .tip-box{background:#1A1A28;border-left:3px solid #534AB7;padding:.9rem 1.5rem;font-size:.82rem;color:#9090C0;font-style:italic;line-height:1.75}
+
+  /* TIPS + RESOURCES */
+  .tips-section{padding:6rem 2rem;max-width:1100px;margin:0 auto}
+  .tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2rem;margin-top:3.5rem}
+  .tip-card{padding:2rem;background:var(--cream);border-bottom:3px solid var(--warm)}
+  .tip-card h3{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:400;color:var(--ebony);margin-bottom:.75rem}
+  .tip-card p{font-size:.85rem;color:var(--muted);line-height:1.75}
+  .resources{background:var(--cream);padding:5rem 2rem}
+  .resources-inner{max-width:1100px;margin:0 auto}
+  .res-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:3rem}
+  .res-card{background:var(--ivory);padding:1.5rem;border:1px solid #DDD5C5}
+  .res-type{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem}
+  .res-name{font-family:'Playfair Display',serif;font-size:1rem;font-weight:400;color:var(--ebony);margin-bottom:.35rem}
+  .res-desc{font-size:.78rem;color:var(--muted)}
+  footer{background:var(--ebony);color:#5A5040;text-align:center;padding:3rem 2rem;font-size:.78rem;letter-spacing:.05em;border-top:1px solid #2A2010}
+  footer span{font-family:'Playfair Display',serif;font-style:italic;color:var(--gold)}
+
+  /* ANIMATIONS */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes slideDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+  @media(max-width:640px){.week-row{padding:1.25rem}.stage-detail-header{flex-direction:column}.months-nav{overflow-x:auto}}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="keys-bg" aria-hidden="true">
+    <div class="wk"><div class="bk" style="left:36px"></div></div><div class="wk"><div class="bk" style="left:36px"></div></div>
+    <div class="wk"></div><div class="wk"><div class="bk" style="left:36px"></div></div>
+    <div class="wk"><div class="bk" style="left:36px"></div></div><div class="wk"><div class="bk" style="left:36px"></div></div>
+    <div class="wk"></div><div class="wk"><div class="bk" style="left:36px"></div></div>
+    <div class="wk"><div class="bk" style="left:36px"></div></div><div class="wk"></div>
+    <div class="wk"><div class="bk" style="left:36px"></div></div><div class="wk"><div class="bk" style="left:36px"></div></div>
+    <div class="wk"><div class="bk" style="left:36px"></div></div><div class="wk"></div>
+  </div>
+  <p class="hero-eyebrow">A complete learning journey</p>
+  <h1>From first note<br>to <em>playing by ear</em></h1>
+  <p class="hero-sub">A structured roadmap for complete beginners — 6 stages, week-by-week guidance, and every skill you need to sit down and play anything you hear.</p>
+  <div class="hero-cta"><a href="#roadmap" class="btn-primary">Begin the journey</a></div>
+  <div class="scroll-hint"><span>Scroll</span><div class="scroll-line"></div></div>
+</section>
+
+<section class="intro-strip">
+  <p>Playing by ear isn't a talent — it's a skill built through <span>accumulated patterns</span>. Every chord you internalize, every interval you recognize, adds to a library your hands draw from <span>instantly</span>. This is that library, built from scratch.</p>
+</section>
+
+<div class="progress-section">
+  <span class="prog-label">Overall progress</span>
+  <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+  <span class="prog-count" id="prog-count">0 tasks done</span>
+</div>
+
+<section class="overview" id="roadmap">
+  <p class="section-label reveal">The complete path</p>
+  <h2 class="section-title reveal">Six stages, one destination<br><small style="font-size:.55em;font-family:'DM Sans',sans-serif;font-weight:300;color:var(--muted);letter-spacing:.01em">Click any stage to expand</small></h2>
+
+  <!-- ═══════════════ STAGE 1 ═══════════════ -->
+  <div class="stages-grid" style="margin-bottom:1.5px">
+    <div class="stage-card reveal" style="--stage-color:var(--s1)" onclick="toggleStage(1)">
+      <p class="stage-num">Stage 01</p><p class="stage-name">The absolute basics</p>
+      <p class="stage-duration">0–3 months · 15–20 min/day</p>
+      <ul class="stage-skills"><li>Note names</li><li>Treble &amp; bass clef</li><li>Posture</li><li>5-finger exercises</li><li>Basic rhythm</li></ul>
+      <p class="click-hint">Click to see week-by-week plan →</p>
+    </div>
+  </div>
+  <div class="stage-detail" id="detail-1">
+    <div class="stage-detail-inner">
+      <div class="stage-detail-header">
+        <div>
+          <div class="stage-detail-title">Stage 1 — The absolute basics</div>
+          <div class="stage-detail-meta">Months 0–3 · 15–20 min/day · 12 weeks</div>
+          <div class="stage-detail-intro">Everything starts here. The goal is not to play beautifully — it's to build correct habits from day one. Bad posture and tension learned now will take months to undo later. Go slow, stay relaxed, and enjoy finding your way around the instrument.</div>
+        </div>
+        <button class="close-btn" onclick="toggleStage(1)">Close ✕</button>
+      </div>
+      <div class="months-nav" id="nav-1">
+        <button class="month-tab active" onclick="showMonth(1,0)">Month 1</button>
+        <button class="month-tab" onclick="showMonth(1,1)">Month 2</button>
+        <button class="month-tab" onclick="showMonth(1,2)">Month 3</button>
+      </div>
+
+      <!-- S1 Month 1 -->
+      <div id="s1-month-0" class="month-panel active"><div class="weeks-list">
+
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Week 1</span><span class="week-time">15 min/day</span></div>
+          <div class="week-title-row">Meet the keyboard</div>
+          <div class="week-desc">Before touching music, learn the geography. The keyboard repeats in groups of 12 notes (7 white, 5 black). Black keys in groups of 2 and 3 are your landmarks — they let you find any white key without looking.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Name every white key A through G</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Find all the C's on the piano (left of the 2-black-key group)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Find Middle C (centre of the keyboard)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Name black key groups — 2s and 3s</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Sit at correct height: elbows level with keys</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Curved fingers (like holding a ball), relaxed wrists</div>
+          </div>
+          <p class="drills-label">Daily drills</p>
+          <ul class="drill-list">
+            <li>Close your eyes, land on any C — repeat 10 times</li>
+            <li>Tap every D on the keyboard from left to right, saying "D" aloud</li>
+            <li>Play any note slowly and listen until the sound fully fades</li>
+          </ul>
+        </div>
+
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Week 2</span><span class="week-time">15 min/day</span></div>
+          <div class="week-title-row">Right hand + reading treble clef</div>
+          <div class="week-desc">The treble clef (top staff) is where your right hand lives. The five lines are EGBDF (Every Good Boy Does Fine) and the four spaces spell FACE. Place fingers 1–5 on C–D–E–F–G — this is your 5-finger position.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Memorize treble clef lines: E G B D F</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Memorize treble clef spaces: F A C E</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>5-finger position RH: thumb on C, fingers on D E F G</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Learn quarter note (1 beat) and half note (2 beats)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Play a 5-note melody by reading sheet music</div>
+          </div>
+          <div class="tip-box">Use Alfred's Adult All-in-One or Faber Adult Piano Adventures — they sequence note-reading perfectly so you're never guessing which note to learn next.</div>
+          <p class="drills-label">Daily drills</p>
+          <ul class="drill-list">
+            <li>Point to a random treble clef note and name it in under 2 seconds</li>
+            <li>Play C–D–E–F–G and back, fingers 1–2–3–4–5–4–3–2–1, slowly and evenly</li>
+            <li>Count out loud while playing: "1, 2, 1–2" for quarters and halves</li>
+          </ul>
+        </div>
+
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Week 3</span><span class="week-time">15–20 min/day</span></div>
+          <div class="week-title-row">Left hand enters + bass clef</div>
+          <div class="week-desc">The bass clef (bottom staff) is where your left hand lives. Lines are GBDFA (Good Boys Do Fine Always), spaces are ACEG (All Cows Eat Grass). Left hand 5-finger position mirrors the right: pinky on C below Middle C up through G. Playing hands together feels impossible at first — it's not. Go slower than feels necessary.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Memorize bass clef lines: G B D F A</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Memorize bass clef spaces: A C E G</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>5-finger position LH: pinky on C, fingers on D E F G</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Learn whole note (4 beats) and dotted half (3 beats)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Practice each hand separately for 5 min, then together for 5 min</div>
+          </div>
+          <p class="drills-label">Daily drills</p>
+          <ul class="drill-list">
+            <li>LH alone: play C–D–E–F–G and back with fingers 5–4–3–2–1, then reverse</li>
+            <li>Hands together: both hands play the same note (C, D, E…) in parallel — go up, then down</li>
+            <li>Count out loud: "1-2-3-4" for whole notes, "1-2-3" for dotted halves</li>
+          </ul>
+        </div>
+
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Week 4</span><span class="week-time">20 min/day</span></div>
+          <div class="week-title-row">First full piece</div>
+          <div class="week-desc">Put everything together. Choose "Ode to Joy" or "Mary Had a Little Lamb" — both stay within the 5-finger position and use notes you already know. The goal is to play from start to finish at a steady (slow) tempo without stopping. A wrong note you keep going through is better than stopping — stopping breaks rhythm, which is the real skill.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Review weeks 1–3 note names (both clefs)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Learn RH melody of "Ode to Joy" or "Mary Had a Little Lamb"</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Add simple LH (block C or G notes on beat 1)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Play hands together, start to finish without stopping</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Record yourself on your phone and listen back</div>
+          </div>
+          <p class="drills-label">Daily drills</p>
+          <ul class="drill-list">
+            <li>Run the piece 3 times daily: once slow, once medium, once slow again</li>
+            <li>Identify the hardest bar — isolate it and play just that bar 5 times slowly</li>
+          </ul>
+        </div>
+        <div class="milestone-row"><span>◆</span>Milestone — play a complete piece, both hands, start to finish at a steady tempo</div>
+      </div></div>
+
+      <!-- S1 Month 2 -->
+      <div id="s1-month-1" class="month-panel"><div class="weeks-list">
+
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Week 5</span><span class="week-time">20 min/day</span></div>
+          <div class="week-title-row">Rhythm &amp; the metronome</div>
+          <div class="week-desc">A metronome is your best teacher for the first year. It doesn't lie. Start at 60 BPM — slower than feels comfortable. Eighth notes divide a beat in half: two eighth notes = one quarter note. Clap and count rhythms before you play them — your body needs to feel the pulse before your hands express it.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Download a metronome app (Metronome Beats is free)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Clap quarter notes to the click at 60 BPM</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Clap eighth notes: "1 and 2 and 3 and 4 and"</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Learn whole rest, half rest, quarter rest symbols</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Play week 4 piece to a metronome at 60 BPM</div>
+          </div>
+          <div class="tip-box">Raise tempo only when 100% of notes are correct at the current speed. If you stumble, drop 5 BPM. Speed is earned, not forced.</div>
+          <p class="drills-label">Daily drills</p>
+          <ul class="drill-list">
+            <li>Tap foot to metronome at 60 BPM while clapping a rhythm pattern: quarter, eighth, eighth, quarter, half</li>
+            <li>Play 5-finger scale with metronome: one note per click, then two notes per click (eighth notes)</li>
+          </ul>
+        </div>
+
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Week 6</span><span class="week-time">20 min/day</span></div>
+          <div class="week-title-row">Dynamics &amp; articulation</div>
+          <div class="week-desc">Music without dynamics is like speech without emotion. Piano (p) means soft — not pressing lightly, but playing with controlled weight. Forte (f) means loud — not banging, but pressing with arm weight behind the finger. Legato (smooth) connects notes so you barely hear the gap. Staccato (bounced) shortens each note to roughly half its value.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Play a phrase piano (p) — soft, controlled weight</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Play same phrase forte (f) — arm weight, not banging</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Legato: connect notes smoothly, one finger lifts as the next presses</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Staccato: quick release, note lasts about half its written length</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Learn crescendo (getting louder) and decrescendo (getting softer)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Play "Ode to Joy" with dynamics and slurs marked on your score</div>
+          </div>
+          <p class="drills-label">Daily drills</p>
+          <ul class="drill-list">
+            <li>Play C–G scale legato up, staccato down — focus on even tone quality</li>
+            <li>Play any melody with a gradual crescendo from p to f over 4 bars, then decrescendo back</li>
+          </ul>
+        </div>
+
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Week 7</span><span class="week-time">25 min/day</span></div>
+          <div class="week-title-row">Expand beyond 5 fingers</div>
+          <div class="week-desc">The thumb-under technique allows you to move across the keyboard without lifting your hand. As you play finger 3 (middle finger), the thumb tucks underneath and lands on the next note. This feels awkward for weeks — that's normal. Practise it slowly and without tension.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Learn ledger line notes just above and below the staff</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Identify Middle C on both treble and bass clef</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Thumb-under: RH plays C D E then thumb crosses under to play F</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Play a piece or exercise that spans more than 5 notes</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Identify ties vs slurs on sheet music</div>
+          </div>
+          <p class="drills-label">Daily drills</p>
+          <ul class="drill-list">
+            <li>Slow thumb-cross: play 1-2-3, thumb under to 1, continue up — no wrist bump</li>
+            <li>Ledger line flashcards: draw 5 random ledger line notes, name them all</li>
+          </ul>
+        </div>
+
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Week 8</span><span class="week-time">25 min/day</span></div>
+          <div class="week-title-row">Consolidation &amp; review</div>
+          <div class="week-desc">This is the most important week of Month 2. Don't skip it. The goal is to polish what you have — not add more. A piece that feels 70% learned is not learned. This week, get two pieces to 95%+ and listen to the recording you made in week 4 to hear how far you've come.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Polish your best piece from weeks 4–7 until it feels automatic</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Sight-read one new short piece you've never seen</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Identify your weakest note-reading area (bass clef? ledger lines?)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Spend 10 min drilling that weakness specifically</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Record yourself and compare to your week 4 recording</div>
+          </div>
+          <p class="drills-label">Daily drills</p>
+          <ul class="drill-list">
+            <li>Play your piece from memory (eyes off the page) for just 8 bars</li>
+            <li>Name any note on a blank staff flashcard in under 3 seconds</li>
+          </ul>
+        </div>
+        <div class="milestone-row"><span>◆</span>Milestone — play a piece with clear dynamics, legato phrasing, and a steady metronome tempo</div>
+      </div></div>
+
+      <!-- S1 Month 3 -->
+      <div id="s1-month-2" class="month-panel"><div class="weeks-list">
+
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Week 9</span><span class="week-time">25–30 min/day</span></div>
+          <div class="week-title-row">Sharps, flats &amp; key signatures</div>
+          <div class="week-desc">A sharp (♯) raises a note by one semitone (one piano key to the right). A flat (♭) lowers it by one semitone (one key to the left). Key signatures tell you which notes are always sharp or flat throughout the piece — you don't re-read the accidental each time. G major has one sharp (F♯). F major has one flat (B♭). C major has none.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Define sharp, flat, and natural on the keyboard</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Play and name all 5 black keys as sharps and flats</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Read a piece with accidentals (in-bar sharps or flats)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Identify C major, G major, F major key signatures</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Learn the circle of fifths — just the first 4 positions</div>
+          </div>
+          <p class="drills-label">Daily drills</p>
+          <ul class="drill-list">
+            <li>Play a short melody in C major, then add F♯ throughout — hear the shift in colour</li>
+            <li>Given a key signature on paper, name which notes are affected in under 5 seconds</li>
+          </ul>
+        </div>
+
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Week 10</span><span class="week-time">30 min/day</span></div>
+          <div class="week-title-row">C major scale — both hands</div>
+          <div class="week-desc">The major scale is the backbone of Western music. C major is all white keys, making it the clearest to learn. The fingering uses a thumb-under (cross) to cover 8 notes smoothly. RH: 1-2-3 then thumb under, 1-2-3-4-5. LH mirrors: 5-4-3-2-1 then finger 3 crosses over the thumb. The wrist should stay level — no bumping on the crossing.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>C major scale RH fingering: 1 2 3 | 1 2 3 4 5</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>C major scale LH fingering: 5 4 3 2 1 | 3 2 1</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>RH alone: up and down one octave, smooth and even</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>LH alone: up and down one octave, smooth and even</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Hands together: parallel motion, one octave</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Understand: a half step is one key, a whole step is two keys</div>
+          </div>
+          <div class="tip-box">Even tone is the goal, not speed. Every note should be the same volume. Record yourself and listen for uneven notes — the thumb is usually the culprit.</div>
+          <p class="drills-label">Daily drills</p>
+          <ul class="drill-list">
+            <li>Scale at 60 BPM, one note per click, focus on thumb crossing silently</li>
+            <li>Scale in groups of 4 notes, pause between groups to check hand position</li>
+          </ul>
+        </div>
+
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Week 11</span><span class="week-time">30 min/day</span></div>
+          <div class="week-title-row">Sight-reading as a daily habit</div>
+          <div class="week-desc">Sight-reading — playing a piece you've never seen before — is the skill that makes everything else faster. The key rule: never stop. Even if you miss a note, keep moving forward. Your eyes should be one bar ahead of where your hands currently are. Read ahead like reading a sentence, not a word at a time.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Eyes always 1 bar ahead — train this deliberately</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Sight-read 3 new short pieces this week</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Never stop for wrong notes — keep time</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Before playing: scan the whole piece (key, time sig, highest/lowest note)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Set a 10-minute sight-reading slot in every practice session</div>
+          </div>
+          <p class="drills-label">Daily drills</p>
+          <ul class="drill-list">
+            <li>Open method book to a new page — scan for 30 seconds, then play once at slow tempo</li>
+            <li>After playing: identify the 2 hardest bars and play them in isolation 5 times</li>
+          </ul>
+        </div>
+
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Week 12</span><span class="week-time">30 min/day</span></div>
+          <div class="week-title-row">Stage 1 finale</div>
+          <div class="week-desc">End Stage 1 by demonstrating everything you've built. Three polished pieces shows consistency. The scale shows technical control. Instant note naming shows reading fluency. The before-and-after recording is the real proof — and it will surprise you how much has changed in 12 weeks.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Play 2–3 pieces polished to performance level</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>C major scale HT at 72 BPM — clean, even, no bumping</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Name any note on treble or bass clef within 2 seconds</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Sight-read a piece one level above your comfort zone</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Record a "Stage 1 complete" video and compare to week 4</div>
+          </div>
+          <p class="drills-label">What you've built</p>
+          <ul class="drill-list">
+            <li>Correct posture and hand position — the foundation everything else rests on</li>
+            <li>Fluent note reading in both treble and bass clef</li>
+            <li>Rhythm: whole, half, quarter, eighth notes and their rests</li>
+            <li>Basic dynamics: piano, forte, legato, staccato</li>
+            <li>C major scale, both hands, with correct fingering</li>
+          </ul>
+        </div>
+        <div class="milestone-row"><span>◆</span>Stage 1 complete — you have the foundation. Stage 2 introduces harmony and chords.</div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STAGE 2 ═══════════════ -->
+  <div class="stages-grid" style="margin-bottom:1.5px;margin-top:1.5px">
+    <div class="stage-card reveal" style="--stage-color:var(--s2)" onclick="toggleStage(2)">
+      <p class="stage-num">Stage 02</p><p class="stage-name">Chords &amp; rhythm</p>
+      <p class="stage-duration">3–9 months · 20–30 min/day</p>
+      <ul class="stage-skills"><li>Major &amp; minor triads</li><li>I–IV–V–I</li><li>Inversions</li><li>Metronome</li><li>Scales</li></ul>
+      <p class="click-hint">Click to see week-by-week plan →</p>
+    </div>
+  </div>
+  <div class="stage-detail" id="detail-2">
+    <div class="stage-detail-inner">
+      <div class="stage-detail-header">
+        <div>
+          <div class="stage-detail-title">Stage 2 — Chords &amp; rhythm</div>
+          <div class="stage-detail-meta">Months 3–9 · 20–30 min/day · 24 weeks</div>
+          <div class="stage-detail-intro">Chords are the engine of music. Once you can build any major or minor triad, move between them smoothly, and play them over a bass line — you can accompany almost any song. This stage also expands your scale vocabulary and introduces rhythmic accompaniment patterns used in pop, classical, and jazz.</div>
+        </div>
+        <button class="close-btn" onclick="toggleStage(2)">Close ✕</button>
+      </div>
+      <div class="months-nav" id="nav-2">
+        <button class="month-tab active" onclick="showMonth(2,0)">Months 4–5</button>
+        <button class="month-tab" onclick="showMonth(2,1)">Months 6–7</button>
+        <button class="month-tab" onclick="showMonth(2,2)">Months 8–9</button>
+      </div>
+
+      <!-- S2 M1 -->
+      <div id="s2-month-0" class="month-panel active"><div class="weeks-list">
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Weeks 13–14</span><span class="week-time">20–25 min/day</span></div>
+          <div class="week-title-row">Major triads — building from the scale</div>
+          <div class="week-desc">A major triad is built by stacking: root + major 3rd (4 semitones) + minor 3rd (3 semitones). In C major: C (root) + E (major 3rd) + G (perfect 5th). The 1-3-5 shortcut works for every major key — count scale degrees, not semitones. Start with C, F, and G — the three chords that appear in every simple song.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Understand: triad = root + 3rd + 5th</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Build C major, F major, G major triads in RH</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Play each chord cleanly — all 3 notes together, no rolling</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>LH plays the root note while RH plays the full chord</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Switch C–F–G–C smoothly without pausing</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Build D, E, A, B major triads too</div>
+          </div>
+          <p class="drills-label">Daily drills</p>
+          <ul class="drill-list">
+            <li>Chord cycling: C–F–G–C, 4 beats each, metronome at 60 BPM</li>
+            <li>Quiz yourself: call out a major key — build and play the triad within 5 seconds</li>
+          </ul>
+        </div>
+
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Weeks 15–16</span><span class="week-time">25 min/day</span></div>
+          <div class="week-title-row">Minor triads &amp; the I–IV–V–I progression</div>
+          <div class="week-desc">A minor triad lowers the 3rd by one semitone: C minor = C + E♭ + G. The emotional contrast between major and minor is immediate and fundamental — train your ear to hear it. The I–IV–V–I progression underpins thousands of songs across every genre. In C major: C–F–G–C. Learning it now means you can fake-accompany most beginner songs immediately.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Build Am, Dm, Em, Bm minor triads</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Play major and minor versions of the same chord — hear the difference</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>I–IV–V–I in C major: C–F–G–C, 4 beats each</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>RH plays melody, LH plays root notes of each chord</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Accompany "Amazing Grace" or "Can Can" using only I–IV–V</div>
+          </div>
+          <div class="tip-box">When you hear a song and think "I know that chord pattern" — that's I–IV–V–I. It's the backbone of folk, pop, blues, and rock.</div>
+        </div>
+        <div class="milestone-row"><span>◆</span>Milestone — accompany a simple song with I–IV–V–I chords, hands together</div>
+      </div></div>
+
+      <!-- S2 M2 -->
+      <div id="s2-month-1" class="month-panel"><div class="weeks-list">
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Weeks 17–20</span><span class="week-time">25–30 min/day</span></div>
+          <div class="week-title-row">Chord inversions &amp; voice leading</div>
+          <div class="week-desc">Inversions rearrange the notes of a chord so a note other than the root is on the bottom. C major root position: C-E-G. First inversion: E-G-C. Second inversion: G-C-E. Why does this matter? Voice leading — moving between chords with minimal hand movement. Instead of jumping your hand across the keyboard, inversions let you pivot smoothly. This is how professional pianists make chord changes sound seamless.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>C major: root (C-E-G), 1st inversion (E-G-C), 2nd inversion (G-C-E)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>F major and G major: all three inversions</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>I–IV–V–I using inversions for smooth voice leading</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Hand should barely move between chords — aim for 1–2 note shifts</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Add G major and D major triads in all inversions</div>
+          </div>
+          <div class="tip-box">Voice leading tip: when moving from C major to F major, keep E and G in the hand and just move C up to F. The hand barely moves. That's the goal.</div>
+          <p class="drills-label">Daily drills</p>
+          <ul class="drill-list">
+            <li>Arpeggiate each chord (play notes individually bottom to top) in all inversions</li>
+            <li>I–IV–V–I with inversions at 72 BPM — smooth, no gaps between chords</li>
+          </ul>
+        </div>
+
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Weeks 21–24</span><span class="week-time">30 min/day</span></div>
+          <div class="week-title-row">Left hand patterns &amp; Alberti bass</div>
+          <div class="week-desc">The Alberti bass is a LH accompaniment pattern used in nearly every classical sonata: instead of a block chord, you play root–5th–3rd–5th in a repeating cycle. It creates momentum without getting in the way of the melody. Broken chord arpeggios (playing chord notes in sequence) achieve a similar flowing effect. Both patterns are used in the Moonlight Sonata.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Alberti bass pattern LH: root–5th–3rd–5th, repeated</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Broken chord arpeggio LH: root–3rd–5th–3rd, repeated</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Block chord pattern: whole chord on beat 1, rest on 2–3–4</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>RH melody + LH Alberti bass simultaneously</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Learn a pop song (e.g. "Let Her Go", "Clocks") using chord + melody</div>
+          </div>
+          <p class="drills-label">Daily drills</p>
+          <ul class="drill-list">
+            <li>LH Alberti bass over C–Am–F–G, 8 beats each at 60 BPM — LH alone until effortless</li>
+            <li>Add RH five-finger melody while LH holds pattern — separate hands first, then together</li>
+          </ul>
+        </div>
+      </div></div>
+
+      <!-- S2 M3 -->
+      <div id="s2-month-2" class="month-panel"><div class="weeks-list">
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Weeks 25–30</span><span class="week-time">30 min/day</span></div>
+          <div class="week-title-row">All major scales + pentatonic</div>
+          <div class="week-desc">There are 12 major scales — one for each note. They all follow the same pattern of whole and half steps: W-W-H-W-W-W-H. Learning all of them builds finger muscle memory across all keys, unlocks any piece in any key, and trains your ear to recognise tonal centres. The pentatonic (5-note) scale is a simpler version used in pop, blues, and improvisation.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>G major scale HT (1 sharp: F♯)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>D major scale HT (2 sharps: F♯, C♯)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>A major scale HT (3 sharps: F♯, C♯, G♯)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>F major scale HT (1 flat: B♭)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>B♭ major scale HT (2 flats: B♭, E♭)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>C major pentatonic: C D E G A (skip F and B)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>All scales at 80 BPM, two octaves if possible</div>
+          </div>
+          <div class="tip-box">Learn one new scale per week. Use the circle of fifths as your guide — each step clockwise adds one sharp, each step counter-clockwise adds one flat.</div>
+          <p class="drills-label">Daily drills</p>
+          <ul class="drill-list">
+            <li>Scales in thirds: RH plays C-E simultaneously, then D-F, then E-G — good for even tone</li>
+            <li>Pentatonic improv: play only the 5 pentatonic notes over a C chord for 2 minutes — no wrong notes possible</li>
+          </ul>
+        </div>
+        <div class="milestone-row"><span>◆</span>Milestone — play any major triad in root position and all inversions, and name all 12 major scales</div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STAGE 3 ═══════════════ -->
+  <div class="stages-grid" style="margin-bottom:1.5px;margin-top:1.5px">
+    <div class="stage-card reveal" style="--stage-color:var(--s3)" onclick="toggleStage(3)">
+      <p class="stage-num">Stage 03</p><p class="stage-name">Theory &amp; ear training</p>
+      <p class="stage-duration">9–18 months · 30–40 min/day</p>
+      <ul class="stage-skills"><li>Key signatures</li><li>All major scales</li><li>Intervals</li><li>7th chords</li><li>Lead sheets</li></ul>
+      <p class="click-hint">Click to see week-by-week plan →</p>
+    </div>
+  </div>
+  <div class="stage-detail" id="detail-3">
+    <div class="stage-detail-inner">
+      <div class="stage-detail-header">
+        <div>
+          <div class="stage-detail-title">Stage 3 — Theory &amp; ear training</div>
+          <div class="stage-detail-meta">Months 9–18 · 30–40 min/day</div>
+          <div class="stage-detail-intro">This is where playing by ear begins. Intervals are the atoms of music — every melody, every chord is made of intervals. Once your ear recognises them instantly, you start hearing music the way a chef tastes food: not as a whole experience but as components. 7th chords add colour and sophistication. Lead sheets let you play any song without full notation.</div>
+        </div>
+        <button class="close-btn" onclick="toggleStage(3)">Close ✕</button>
+      </div>
+      <div class="months-nav" id="nav-3">
+        <button class="month-tab active" onclick="showMonth(3,0)">Intervals</button>
+        <button class="month-tab" onclick="showMonth(3,1)">7th Chords</button>
+        <button class="month-tab" onclick="showMonth(3,2)">Lead Sheets</button>
+      </div>
+
+      <div id="s3-month-0" class="month-panel active"><div class="weeks-list">
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Weeks 37–44</span><span class="week-time">35 min/day</span></div>
+          <div class="week-title-row">All 12 intervals — hearing the gaps</div>
+          <div class="week-desc">An interval is the distance between two notes. Each interval has a unique sound — once you know it, you can hear it anywhere. The trick to memorising them is song anchors: musical examples your ear already knows. Sing each interval before playing it. Your voice is the fastest path to your ear.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Minor 2nd (1 semitone) — Jaws theme</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Major 2nd (2 semitones) — Happy Birthday</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Minor 3rd (3 semitones) — Smoke on the Water</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Major 3rd (4 semitones) — When the Saints Go Marching In</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Perfect 4th (5 semitones) — Here Comes the Bride</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Tritone (6 semitones) — The Simpsons theme</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Perfect 5th (7 semitones) — Star Wars theme</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Minor 6th (8 semitones) — The Entertainer</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Major 6th (9 semitones) — My Bonnie Lies Over the Ocean</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Minor 7th (10 semitones) — Somewhere (West Side Story)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Major 7th (11 semitones) — Take On Me</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Octave (12 semitones) — Somewhere Over the Rainbow</div>
+          </div>
+          <p class="drills-label">Daily drills</p>
+          <ul class="drill-list">
+            <li>Use EarMaster or musictheory.net interval trainer — 10 min daily, ascending intervals first</li>
+            <li>Play an interval on the piano and sing it back before moving on</li>
+            <li>Sing the first two notes of each song anchor from memory</li>
+          </ul>
+        </div>
+        <div class="milestone-row"><span>◆</span>Milestone — identify any melodic interval by ear within 3 seconds</div>
+      </div></div>
+
+      <div id="s3-month-1" class="month-panel"><div class="weeks-list">
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Weeks 45–52</span><span class="week-time">35 min/day</span></div>
+          <div class="week-title-row">7th chords — adding the colour layer</div>
+          <div class="week-desc">A 7th chord adds a fourth note on top of a triad. The four types you need to know: Major 7th (bright, dreamy), Dominant 7th (tense, wants to resolve), Minor 7th (mellow, cool), Half-diminished (dark, jazzy). The ii–V–I progression uses three of these and is the most common chord movement in jazz — but it also appears in pop, R&B, and film music constantly.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Major 7th chord: Cmaj7 = C-E-G-B (root + maj3 + perf5 + maj7)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Dominant 7th: G7 = G-B-D-F (root + maj3 + perf5 + min7)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Minor 7th: Dm7 = D-F-A-C (root + min3 + perf5 + min7)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Half-diminished: Bm7b5 = B-D-F-A (root + min3 + dim5 + min7)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>ii–V–I in C: Dm7 → G7 → Cmaj7</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Hear: major 7 = dreamy · dom 7 = tense · min 7 = mellow</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Play ii–V–I in 3 different keys (C, F, G)</div>
+          </div>
+          <div class="tip-box">The dominant 7th (G7) has a strong pull toward the I chord (C). That tension-release is the engine behind most chord movements in Western music. Once you hear it, you hear it everywhere.</div>
+        </div>
+        <div class="milestone-row"><span>◆</span>Milestone — hear a chord and distinguish major, minor, or dominant 7th by ear</div>
+      </div></div>
+
+      <div id="s3-month-2" class="month-panel"><div class="weeks-list">
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Weeks 53–60</span><span class="week-time">40 min/day</span></div>
+          <div class="week-title-row">Reading lead sheets — play any song</div>
+          <div class="week-desc">A lead sheet shows only the melody (in notation) and chord symbols above it (like "Cmaj7", "G7", "Am7"). You create the rest — the bass line, the voicing, the rhythm pattern. This is how professional musicians at jam sessions can play any song with any band. Your job: RH plays melody, LH interprets the chord symbols creatively.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Understand a lead sheet: melody + chord symbols only</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Decode chord symbols: Cmaj7, Dm7, G7, Am, Fsus2</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>RH plays written melody, LH plays root note of each chord</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Upgrade LH: play full block chord on beat 1 of each bar</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Upgrade further: LH plays broken arpeggio pattern</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Find a lead sheet for a song you love and play through it</div>
+          </div>
+          <p class="drills-label">Daily drills</p>
+          <ul class="drill-list">
+            <li>Download 3 lead sheets from musicnotes.com or hooktheory.com — try each one cold</li>
+            <li>For each chord symbol: build it in under 3 seconds without looking it up</li>
+          </ul>
+        </div>
+        <div class="milestone-row"><span>◆</span>Milestone — play a full song from a lead sheet with no prior preparation, on the first try</div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STAGE 4 ═══════════════ -->
+  <div class="stages-grid" style="margin-bottom:1.5px;margin-top:1.5px">
+    <div class="stage-card reveal" style="--stage-color:var(--s4)" onclick="toggleStage(4)">
+      <p class="stage-num">Stage 04</p><p class="stage-name">Chord vocabulary</p>
+      <p class="stage-duration">18–30 months · 30–45 min/day</p>
+      <ul class="stage-skills"><li>7ths, 9ths, sus chords</li><li>ii–V–I</li><li>Voicings</li><li>Transcribing</li><li>Pop patterns</li></ul>
+      <p class="click-hint">Click to see week-by-week plan →</p>
+    </div>
+  </div>
+  <div class="stage-detail" id="detail-4">
+    <div class="stage-detail-inner">
+      <div class="stage-detail-header">
+        <div>
+          <div class="stage-detail-title">Stage 4 — Chord vocabulary</div>
+          <div class="stage-detail-meta">Months 18–30 · 30–45 min/day</div>
+          <div class="stage-detail-intro">This is where your playing starts to sound sophisticated. Extended chords (9ths, 11ths, sus), modern voicings, and the ability to transcribe songs by ear — these skills unlock any genre. Transcription is the secret weapon: figuring out chords and melodies by ear, even imperfectly, trains your ear faster than any exercise.</div>
+        </div>
+        <button class="close-btn" onclick="toggleStage(4)">Close ✕</button>
+      </div>
+      <div class="months-nav" id="nav-4">
+        <button class="month-tab active" onclick="showMonth(4,0)">Extended chords</button>
+        <button class="month-tab" onclick="showMonth(4,1)">Voicings</button>
+        <button class="month-tab" onclick="showMonth(4,2)">Transcription</button>
+      </div>
+
+      <div id="s4-month-0" class="month-panel active"><div class="weeks-list">
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Months 19–22</span><span class="week-time">35–40 min/day</span></div>
+          <div class="week-title-row">Extended chords: 9ths, sus, add9</div>
+          <div class="week-desc">Extended chords add notes beyond the 7th. A 9th chord = 7th chord + 9th (same as the 2nd, one octave higher). Sus chords suspend the 3rd and replace it with the 2nd or 4th — creating tension that "resolves" when the 3rd returns. These are the chords behind the modern pop sound: Coldplay, Radiohead, John Legend all rely on them heavily.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Dominant 9th: G9 = G-B-D-F-A</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Major 9th: Cmaj9 = C-E-G-B-D</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Sus2: Csus2 = C-D-G (3rd replaced by 2nd)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Sus4: Csus4 = C-F-G (3rd replaced by 4th)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Add9: Cadd9 = C-E-G-D (triad + 9th, no 7th)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Play a pop progression using Csus2–G–Am–Fsus2</div>
+          </div>
+        </div>
+        <div class="milestone-row"><span>◆</span>Milestone — identify a sus, add9, or major 9 chord by ear in a song you're listening to</div>
+      </div></div>
+
+      <div id="s4-month-1" class="month-panel"><div class="weeks-list">
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Months 23–26</span><span class="week-time">40 min/day</span></div>
+          <div class="week-title-row">Chord voicings — the pro sound</div>
+          <div class="week-desc">Voicing is the art of arranging the notes of a chord across the keyboard for maximum musical effect. A Cmaj7 can be voiced as C-B-E (shell + 7th + 3rd) in the LH while the RH plays the melody. Or G-B-E across both hands. Professional pianists spend years exploring voicings — they're what make two people playing the same chord sound completely different.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Shell voicings: LH plays root + 7th, RH plays 3rd + extension</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Drop-2 voicings: lower the 2nd voice from top by one octave</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Quartal voicings: stack 4ths instead of 3rds (D-G-C-F)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Voice a ii–V–I in C with smooth voice leading between chords</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Play the same chord 4 different ways and hear the difference</div>
+          </div>
+          <div class="tip-box">Great voicings create space. You don't need to play every note of a chord — leaving notes out often sounds richer than playing them all.</div>
+        </div>
+      </div></div>
+
+      <div id="s4-month-2" class="month-panel"><div class="weeks-list">
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Months 27–30</span><span class="week-time">45 min/day</span></div>
+          <div class="week-title-row">Transcription — training your ear by hand</div>
+          <div class="week-desc">Transcription means figuring out a piece of music by listening — no sheet music. Start with just the bass line (lowest note per chord). Then identify chord quality (major/minor). Then figure out the full voicing. Even 70% correct transcription trains your ear enormously. Use Transcribe! software or YouTube videos slowed down with the speed function.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Transcribe the bass line of a simple pop song</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Identify chord quality (major/minor/dom 7) for each chord</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Write out the chord chart (just symbols, no notation)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Play your transcription back against the recording — adjust where wrong</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Transcribe one song per week for this entire phase</div>
+          </div>
+          <p class="drills-label">Song suggestions to transcribe</p>
+          <ul class="drill-list">
+            <li>"Let Her Go" by Passenger — simple I–V–vi–IV progression throughout</li>
+            <li>"The Scientist" by Coldplay — 4-chord loop, slow tempo, clear bass</li>
+            <li>"Hallelujah" by Leonard Cohen — I, IV, V, vi with a few passing chords</li>
+          </ul>
+        </div>
+        <div class="milestone-row"><span>◆</span>Milestone — transcribe the chord chart of a full song by ear, verified against a real chart</div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STAGE 5 ═══════════════ -->
+  <div class="stages-grid" style="margin-bottom:1.5px;margin-top:1.5px">
+    <div class="stage-card reveal" style="--stage-color:var(--s5)" onclick="toggleStage(5)">
+      <p class="stage-num">Stage 05</p><p class="stage-name">Playing by ear</p>
+      <p class="stage-duration">30–48 months · 45 min/day</p>
+      <ul class="stage-skills"><li>Chord recognition</li><li>Melodic dictation</li><li>Transposing</li><li>Improvisation</li><li>Faking</li></ul>
+      <p class="click-hint">Click to see week-by-week plan →</p>
+    </div>
+  </div>
+  <div class="stage-detail" id="detail-5">
+    <div class="stage-detail-inner">
+      <div class="stage-detail-header">
+        <div>
+          <div class="stage-detail-title">Stage 5 — Playing by ear</div>
+          <div class="stage-detail-meta">Months 30–48 · 45 min/day</div>
+          <div class="stage-detail-intro">You've been building toward this. Playing by ear is not about special talent — it's about having enough musical patterns stored in your ear and hands that when you hear something, you recognise the parts faster than you need to think. This stage trains the real-time connection between what you hear and what you play.</div>
+        </div>
+        <button class="close-btn" onclick="toggleStage(5)">Close ✕</button>
+      </div>
+      <div class="months-nav" id="nav-5">
+        <button class="month-tab active" onclick="showMonth(5,0)">Advanced ear</button>
+        <button class="month-tab" onclick="showMonth(5,1)">Improvisation</button>
+        <button class="month-tab" onclick="showMonth(5,2)">Instant play</button>
+      </div>
+
+      <div id="s5-month-0" class="month-panel active"><div class="weeks-list">
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Months 31–36</span><span class="week-time">45 min/day</span></div>
+          <div class="week-title-row">Advanced ear training — melodic dictation</div>
+          <div class="week-desc">Melodic dictation means listening to a melody and writing (or playing) it back exactly. Harmonic dictation means identifying each chord by ear. These are high-level skills that feel frustratingly hard at first — but they're the difference between needing sheet music and not needing it. Daily practice of 10–15 minutes compounds fast.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Melodic dictation: hear a 4-bar melody and play it back</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Harmonic dictation: name each chord in a 4-bar progression</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Identify chord quality: major, minor, dom 7, maj7, min7, dim</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Identify chord inversions by ear (which note is on the bottom)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Sing back a melody after one listen — no piano</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Use EarMaster or Teoria.com for 15 min daily</div>
+          </div>
+          <div class="tip-box">The goal: when you hear a chord change, you feel it before you think it. Like recognising a friend's face — instant, automatic, no calculation.</div>
+        </div>
+        <div class="milestone-row"><span>◆</span>Milestone — hear a chord played once and name it (quality + root) within 2 seconds</div>
+      </div></div>
+
+      <div id="s5-month-1" class="month-panel"><div class="weeks-list">
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Months 37–42</span><span class="week-time">45 min/day</span></div>
+          <div class="week-title-row">Improvisation foundations</div>
+          <div class="week-desc">Improvisation is the act of composing in real time. The secret beginners don't know: you only need 5 notes to start. The pentatonic scale (C-D-E-G-A) works over nearly any C major chord progression — no wrong notes. Then add the blues note (G♭) for soul. Target chord tones (1-3-5-7 of each chord) on the strong beats (1 and 3) and use passing notes in between.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Improvise freely using only C pentatonic over I–IV–V backing track</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Add the blues note (G♭) — feel the extra tension</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Target chord tones on beats 1 and 3 of each bar</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Call-and-response phrasing: play 2 bars, "rest" 2 bars, answer yourself</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Improvise for 5 continuous minutes without stopping</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Transpose your improv to G major and F major</div>
+          </div>
+          <div class="tip-box">The goal of improvisation at this stage is not to sound impressive — it's to connect what you hear in your head to what your hands play. Start slow and melodic. Speed and complexity come later.</div>
+        </div>
+      </div></div>
+
+      <div id="s5-month-2" class="month-panel"><div class="weeks-list">
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">Months 43–48</span><span class="week-time">45 min/day</span></div>
+          <div class="week-title-row">Playing along &amp; faking it</div>
+          <div class="week-desc">"Faking" means creating a convincing-sounding arrangement of any song on the spot — without sheet music, without preparation. You hear the key, you feel the time signature, you recognise the progression, and your hands play. This is the output of all the pattern-recognition you've built. Practice it daily: put on a song you've never played and try to join in within 8 bars.</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Play along to a recording on first listen — don't stop</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Identify the key of any song within 15 seconds of hearing it</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Transpose a song you know well into 3 different keys</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Fake a full arrangement (melody + harmony + bass) on the spot</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Play a song you've never seen sheet music for</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Jam with another musician (guitarist, singer) without preparation</div>
+          </div>
+          <p class="drills-label">Daily challenge</p>
+          <ul class="drill-list">
+            <li>Pick a random song from a playlist you've never played — play along within the first chorus</li>
+            <li>After playing: name the key, write out the chord progression from memory</li>
+          </ul>
+        </div>
+        <div class="milestone-row"><span>◆</span>Milestone — hear a song once and play it back with melody and chord accompaniment</div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STAGE 6 ═══════════════ -->
+  <div class="stages-grid" style="margin-top:1.5px">
+    <div class="stage-card reveal" style="--stage-color:var(--s6)" onclick="toggleStage(6)">
+      <p class="stage-num">Stage 06</p><p class="stage-name">Instant play — the destination</p>
+      <p class="stage-duration">4+ years · ongoing</p>
+      <ul class="stage-skills"><li>Real-time arrangement</li><li>Full improvisation</li><li>Any style</li><li>Jam sessions</li></ul>
+      <p class="click-hint">Click to see what this looks like →</p>
+    </div>
+  </div>
+  <div class="stage-detail" id="detail-6">
+    <div class="stage-detail-inner">
+      <div class="stage-detail-header">
+        <div>
+          <div class="stage-detail-title">Stage 6 — Instant play</div>
+          <div class="stage-detail-meta">The destination · 4+ years · ongoing</div>
+          <div class="stage-detail-intro">Stage 6 is not a finish line — it's the beginning of a lifetime of musical conversation. The patterns you've built are now automatic. What used to require thought now flows. You sit at a piano and things come out. The work now is deepening style, expanding repertoire, and playing with others.</div>
+        </div>
+        <button class="close-btn" onclick="toggleStage(6)">Close ✕</button>
+      </div>
+      <div class="weeks-list">
+        <div class="week-row">
+          <div class="week-top"><span class="week-label">What it looks like</span></div>
+          <div class="week-title-row">You hear it — you play it</div>
+          <div class="week-desc">Someone hums a melody. A song comes on the radio. A friend asks you to play something. You sit down — and it comes out. Not perfectly, but recognisably, musically, fluently. That's the destination. Here's what got you there:</div>
+          <div class="week-tasks">
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Recognise common progressions instantly (I–IV–V, ii–V–I, I–V–vi–IV)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>All 12 major and natural minor scales — no hesitation</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Fluent in 2+ styles (pop, jazz, classical, gospel…)</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Arrange songs in real time — melody, harmony, bass, rhythm simultaneously</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Improvise freely over any chord progression</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Jam confidently with other musicians without preparation</div>
+            <div class="task-chip" onclick="toggleTask(this)"><span class="tc"></span>Transpose any song into any key by ear</div>
+          </div>
+          <p class="drills-label">What keeps you growing at Stage 6</p>
+          <ul class="drill-list">
+            <li>Learn a new style: stride piano, bossa nova, gospel — each expands your vocabulary</li>
+            <li>Transcribe solos from pianists you admire: Oscar Peterson, Bill Evans, Chick Corea</li>
+            <li>Play with musicians better than you — the fastest growth environment</li>
+            <li>Teach someone else — explaining forces you to articulate what you know intuitively</li>
+          </ul>
+        </div>
+        <div class="tip-box">Stage 6 is not about perfection — it's about fluency. Like speaking a language: you don't think about grammar, you think about what you want to say. The music is the conversation.</div>
+        <div class="milestone-row"><span>◆</span>The destination — sit down at any piano and play anything you hear</div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- TIPS -->
+<section class="tips-section">
+  <p class="section-label reveal">Making it stick</p>
+  <h2 class="section-title reveal">Principles that matter</h2>
+  <div class="tips-grid">
+    <div class="tip-card reveal"><h3>Daily beats weekly</h3><p>15 focused minutes every day produces faster results than 2 hours on weekends. Your brain consolidates motor patterns during sleep — the gap between sessions is part of the learning.</p></div>
+    <div class="tip-card reveal"><h3>Never look at your hands</h3><p>From week one, resist looking down while you play. Navigate by feel. This pays enormous dividends later when your eyes need to read music.</p></div>
+    <div class="tip-card reveal"><h3>Slow is smooth, smooth is fast</h3><p>Every piece should be learned at a tempo where zero mistakes happen. Only then raise the metronome. Fast and stumbling embeds the wrong patterns.</p></div>
+    <div class="tip-card reveal"><h3>Record yourself weekly</h3><p>The gap between what you think you sound like and what you actually sound like is wide at first. Recordings close that gap faster than anything else.</p></div>
+  </div>
+</section>
+
+<!-- RESOURCES -->
+<section class="resources">
+  <div class="resources-inner">
+    <p class="section-label reveal">What to use</p>
+    <h2 class="section-title reveal">Recommended tools</h2>
+    <div class="res-grid">
+      <div class="res-card reveal"><p class="res-type">Method book</p><p class="res-name">Alfred's Adult All-in-One</p><p class="res-desc">Best-sequenced beginner book for adults. Covers technique, theory, and repertoire together.</p></div>
+      <div class="res-card reveal"><p class="res-type">App</p><p class="res-name">Simply Piano</p><p class="res-desc">Guided lesson app with real-time feedback. Excellent for the first 3 months.</p></div>
+      <div class="res-card reveal"><p class="res-type">Theory</p><p class="res-name">Hooktheory</p><p class="res-desc">Interactive theory book focused on chord progressions and song analysis. Essential for Stages 3–5.</p></div>
+      <div class="res-card reveal"><p class="res-type">Ear training</p><p class="res-name">EarMaster</p><p class="res-desc">The gold standard for interval and chord ear training. 10 minutes daily builds fast recognition.</p></div>
+      <div class="res-card reveal"><p class="res-type">YouTube</p><p class="res-name">Nahre Sol &amp; Adam Neely</p><p class="res-desc">Deep, inspiring content on musicality and theory without being overwhelming.</p></div>
+      <div class="res-card reveal"><p class="res-type">Repertoire</p><p class="res-name">First pieces</p><p class="res-desc">Ode to Joy · Mary Had a Little Lamb · Jingle Bells · Can Can · When the Saints Go Marching In</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>The destination is <span>playing anything you hear.</span> Every stage gets you closer.</p>
+  <p style="margin-top:.75rem;font-size:.68rem;letter-spacing:.1em;">Piano Roadmap · Built with patience in mind</p>
+</footer>
+
+<script>
+  // ── Give every task chip a stable ID based on its text content ──
+  function taskKey(el) {
+    return 'task:' + el.textContent.trim().replace(/\s+/g, ' ');
+  }
+
+  // ── Save a single task state to localStorage ──
+  function saveTask(el) {
+    try { localStorage.setItem(taskKey(el), el.classList.contains('done') ? '1' : '0'); } catch(e) {}
+  }
+
+  // ── Restore all task states from localStorage on page load ──
+  function restoreTasks() {
+    document.querySelectorAll('.task-chip').forEach(el => {
+      try {
+        if (localStorage.getItem(taskKey(el)) === '1') el.classList.add('done');
+      } catch(e) {}
+    });
+  }
+
+  // ── Toggle a task, save it, update progress ──
+  function toggleTask(el) {
+    el.classList.toggle('done');
+    saveTask(el);
+    updateProgress();
+  }
+
+  // ── Update the sticky progress bar ──
+  function updateProgress() {
+    const all = document.querySelectorAll('.task-chip'), done = document.querySelectorAll('.task-chip.done');
+    document.getElementById('prog-fill').style.width = (all.length ? Math.round(done.length / all.length * 100) : 0) + '%';
+    document.getElementById('prog-count').textContent = done.length + ' / ' + all.length + ' tasks done';
+  }
+
+  // ── Stage accordion ──
+  let openStage = null;
+  function getCard(n) { return document.querySelector('[onclick="toggleStage(' + n + ')"]'); }
+  function toggleStage(n) {
+    const detail = document.getElementById('detail-' + n), card = getCard(n);
+    if (openStage === n) {
+      detail.classList.remove('open'); card.classList.remove('active-card'); openStage = null;
+    } else {
+      if (openStage) { document.getElementById('detail-' + openStage).classList.remove('open'); getCard(openStage).classList.remove('active-card'); }
+      detail.classList.add('open'); card.classList.add('active-card'); openStage = n;
+      setTimeout(() => detail.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    }
+  }
+
+  // ── Month tabs ──
+  function showMonth(stage, idx) {
+    document.getElementById('nav-' + stage).querySelectorAll('.month-tab').forEach((t,i) => t.classList.toggle('active', i===idx));
+    document.getElementById('detail-' + stage).querySelectorAll('.month-panel').forEach((p,i) => p.classList.toggle('active', i===idx));
+  }
+
+  // ── Scroll reveal ──
+  const obs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }), {threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // ── Hero CTA ──
+  document.querySelector('.btn-primary').addEventListener('click', e => { e.preventDefault(); document.getElementById('roadmap').scrollIntoView({behavior:'smooth'}); });
+
+  // ── Init: restore saved tasks, then update progress bar ──
+  restoreTasks();
+  updateProgress();
+</script>
+</body>
+</html>
